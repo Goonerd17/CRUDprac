@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet" />
+
+  <title>Name CRUD</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin-top: 200px;
+    }
+
+    .mypic {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .mypic h1 {
+      color: #333;
+    }
+
+    .box {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+
+    .memberbox {
+      margin-bottom: 10px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-outline-primary {
+      color: #007bff;
+      background-color: transparent;
+      border: 1px solid #007bff;
+    }
+
+    .btn-outline-primary:hover {
+      color: #fff;
+      background-color: #007bff;
+    }
+
+    .mybox {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+
+    .mybox li {
+      margin-bottom: 10px;
+    }
+
+    .mybox h3 {
+      margin-bottom: 5px;
+    }
+  </style>
+
+  <script>
+    $(document).ready(function () {
+
+    });
+
+
+
+    //Member Create
+    function save_member() {
+      let name = $('#name').val();
+
+      let formData = new FormData(); // ? 객체 ?
+      formData.append('name_give', name);
+
+      fetch('/member', { method: 'POST', body: formData }).then((response) => response.json()).then((data) => {
+
+        alert(data['msg']);
+        window.location.reload()
+      });
+    }
+
+
+
+    //Member Read
+    function search_member() {
+      let name = $('#name').val();
+
+      fetch('/member?name=' + name).then((res) => res.json()).then((data) => {
+
+        if (data.result) {
+          alert('불러오기 성공');
+          show_member(data['result']) //? data.result 하고 data['result']는 다른 값인가? 추측: data.result는 해당 멤버가 있다는 것을 알리고, data['result']은 member의 값을 뱉어냄 ?
+        } else {
+          alert('회원이 존재하지 않습니다.');
+        }
+      })
+    }
+
+
+
+    /*
+    function update2_member() {
+      let name = $('#name').val();
+      let newName = $('#newName').val();
+
+     
+      fetch('/member', {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: name, newName: newName })})  // 데이터베이스에 수정할 이름과 새 이름을 전달
+        .then((res) => res.json())
+        .then((data) => {
+          
+          alert(data.message);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+    */
+
+    //Member Update
+    function update_member() {
+      let name = $('#name').val();
+      let newName = $('#newName').val();
+
+      fetch('/member', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, newName: newName })
+      })
+        .then((res) => res.json()).then((data) => {
+
+          if (data.result) {
+            alert('수정 성공');
+            show_member(data['result']);
+          } else {
+            alert('수정 실패');
+          }
+        });
+    }
+
+
+
+    //Member Delete
+    function delete_member() {
+      let nowName = $('#resultname').text(); // 텍스트 값을 가져올 때 .val() 대신 ? .text() ?를 사용
+
+      fetch('/member/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nowName })
+      })
+        .then(response => response.json()).then(data => {
+
+          alert(data.message);     // 메세지 알림창
+          window.location.reload() //? 데이터베이스에서 삭제 후, 해당 화면에서도 삭제할 때, 이게 가장 좋은 방법 ?
+        })
+        .catch(error => {
+          alert('삭제 실패');
+        });
+    }
+
+
+
+    //화면에 데이터의 값을 보여주는 함수
+    function show_member(member) {
+      let memberNameElement = document.getElementById('resultname'); // ? 왜 제이쿼리로는 작동하지 않는걸까 ? 제이쿼리로 사용했을 때, TypeError: Object of type ObjectId is not JSON serializable 에러 발생. 이에 대해서 찾아볼 것
+
+      if (member) {                                                  // ? show() 함수가 호출된 함수 안에서의 member 의미 ?
+        memberNameElement.textContent = member.name;                 // .textContent 는 DOM 요소, 이 쪽에 대해 좀 더 알아볼 것. 별다른 메서드 없이 해당 값을 조정할 수 있다?
+      } else {
+        memberNameElement.textContent = '';
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div class="mypic">
+    <h1>Name CRUD</h1>
+  </div>
+  <div class="box">
+    <div class="memberbox">
+      <input id="name" class="form-control" type="text" placeholder="이름" />
+      <button onclick="save_member()" type="button" class="btn btn-outline-primary">Create</button>
+      <button onclick="search_member()" type="button" class="btn btn-outline-primary">Read</button>
+    </div>
+  </div>
+  <div class="mybox" id="member-list">
+    <li>
+      <h3><span id="resultname"></span></h3>
+      <input id="newName" class="form-control" type="text" placeholder="새 이름" />
+      <button onclick="update_member()" type="button" class="btn btn-outline-primary">Update</button>
+      <button onclick="delete_member()" type="button" class="btn btn-outline-primary">Delete</button>
+    </li>
+  </div>
+</body>
+
+</html>
