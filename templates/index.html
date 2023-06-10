@@ -119,6 +119,7 @@
 
 
 
+
     //Member Read, GET
     function search_member() {
       let name = $('#name').val();
@@ -138,26 +139,6 @@
 
 
 
-    /*
-    function update2_member() {
-      let name = $('#name').val();
-      let newName = $('#newName').val();
-
-     
-      fetch('/member', {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: name, newName: newName })})  // 데이터베이스에 수정할 이름과 새 이름을 전달
-        .then((res) => res.json())
-        .then((data) => {
-          
-          alert(data.message);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    }
-    */
 
     //Member Update
     function update_member() {
@@ -182,6 +163,7 @@
 
 
 
+
     //Member Delete
     function delete_member() {
       let nowName = $('#resultname').text();              // val()은 input, select, textarea와 같은 입력 요소의 값을 가져올 때 사용. 반면 text()는 span,div,p와 같이 요소의 텍스트 내용을 가져올 때 사용.
@@ -202,6 +184,7 @@
 
 
 
+    
     //search, update된 데이터의 값을 화면에 출력해주는 함수
     function show_member(member) {
       let memberNameElement = document.getElementById('resultname'); /* DOM에서 id가 resultname인 요소를 가져오는 JavaScript의 기본적인 메서드.

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 from pymongo import MongoClient
-client = MongoClient('mongodb+srv://sparta:test@cluster0.qrfh6ue.mongodb.net/?retryWrites=true&w=majority') 
+client = MongoClient('개인 MongoDB') 
 db = client.dbsparta
 
 @app.route('/')
@@ -24,7 +24,7 @@ def member_post():
     
     db.members.insert_one(doc)               # 데이터베이스에 저장
     
-    return jsonify({'msg': '저장 성공'})      # '저장성공'이라는 값을 가진 msg를 return
+    return jsonify({'msg': '저장 성공'})     # '저장성공'이라는 값을 가진 msg를 return
 
 
 
@@ -43,24 +43,7 @@ def member_get():
         return jsonify({'result': None})        # 데이터베이스에서 요청받은 name을 가진 member가 존재한다면 member값을 가진 result 반환, 존재하지 않다면 None 반환 
 
 
-
-
-"""
-이 부분은 수정 후, 수정되었다는 알림만을 전송할 때 사용. index.html update2_member 함수를 찾아 확인 해볼 것
-Member Update
-@app.route("/member", methods=["PUT"])
-def member_put():
-    data = request.get_json()      
-    name = data.get('name')        
-    newName = data.get('newName') 
-    
-    result = db.members.update_one({'name': name}, {'$set': {'name': newName}}) 
-
-    if result.modified_count > 0:
-        return jsonify({'message': '이름이 수정되었습니다.'})
-    else:
-        return jsonify({'message': '이름 수정에 실패했습니다.'})
-"""        
+     
 
 # Member Update, PUT
 @app.route("/member", methods=["PUT"])
